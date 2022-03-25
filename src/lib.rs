@@ -1,7 +1,5 @@
 pub use log::*;
 
-use log::{LevelFilter, Metadata, Record};
-
 pub struct Logger;
 
 static LOGGER: Logger = Logger;
