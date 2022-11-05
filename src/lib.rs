@@ -8,19 +8,24 @@ static LOGGER: Logger = Logger;
 static LOGGER_SET_LOCK: Once = Once::new();
 
 pub fn init() {
+	let level = if cfg!(debug_assertions) {
+		LevelFilter::Debug
+	} else {
+		LevelFilter::Info
+	};
+	init_with_level(level)
+}
+
+pub fn init_with_level(level: LevelFilter) {
 	LOGGER_SET_LOCK.call_once(|| {
-		log::set_logger(&LOGGER).expect("Tried to set global logger twice");
-		if cfg!(debug_assertions) {
-			log::set_max_level(LevelFilter::Debug);
-		} else {
-			log::set_max_level(LevelFilter::Info);
-		}
+		set_logger(&LOGGER).expect("Tried to set global logger twice");
+		set_max_level(level);
 	});
 }
 
 static COLORS: [u32; 5] = [91, 31, 33, 36, 90];
 
-impl log::Log for Logger {
+impl Log for Logger {
 	fn enabled(&self, _metadata: &Metadata) -> bool {
 		true
 	}
